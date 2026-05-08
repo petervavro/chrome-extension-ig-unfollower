@@ -1,12 +1,46 @@
-const overlayContent = document.createElement("p");
-Object.assign(overlayContent.style, {
-  color: "#fff",
-  backgroundColor: "#ff6600",
-  borderRadius: "1rem",
-  padding: "1rem",
+const overlayDot = document.createElement("span");
+Object.assign(overlayDot.style, {
+  flexShrink: "0",
+  width: "10px",
+  height: "10px",
+  borderRadius: "50%",
+  background: "#ff6600",
+  animation: "ig-unfollower-pulse 1.2s ease-in-out infinite",
 });
-overlayContent.textContent =
-  "Instagram unfollow automation in progress. Please wait. It is necessary to keep this window on screen. You can stop the process by clicking the extension icon.";
+
+const overlayText = document.createElement("span");
+Object.assign(overlayText.style, {
+  fontSize: "13px",
+  lineHeight: "1.4",
+  color: "#e65100",
+});
+overlayText.textContent =
+  "Unfollow automation running. Keep this tab visible. Click the extension icon to stop.";
+
+const overlayCard = document.createElement("div");
+Object.assign(overlayCard.style, {
+  position: "absolute",
+  bottom: "35vh",
+  left: "50%",
+  transform: "translateX(-50%)",
+  display: "flex",
+  alignItems: "center",
+  gap: "10px",
+  background: "#fff",
+  border: "1.5px solid #ffcc80",
+  borderRadius: "10px",
+  padding: "12px 16px",
+  width: "320px",
+  boxShadow: "0 4px 16px rgba(0,0,0,0.18)",
+  fontFamily:
+    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+});
+overlayCard.appendChild(overlayDot);
+overlayCard.appendChild(overlayText);
+
+const overlayStyle = document.createElement("style");
+overlayStyle.textContent =
+  "@keyframes ig-unfollower-pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }";
 
 const overlay = document.createElement("div");
 Object.assign(overlay.style, {
@@ -15,14 +49,13 @@ Object.assign(overlay.style, {
   left: "0",
   width: "100%",
   height: "100%",
-  backgroundColor: "rgba(0, 0, 0, 0.5)",
+  backgroundColor: "rgba(0, 0, 0, 0.45)",
   display: "none",
-  justifyContent: "center",
-  alignItems: "center",
-  zIndex: "1000",
+  zIndex: "2147483647",
 });
 
-overlay.appendChild(overlayContent);
+overlay.appendChild(overlayStyle);
+overlay.appendChild(overlayCard);
 document.body.appendChild(overlay);
 
 let task = null;
