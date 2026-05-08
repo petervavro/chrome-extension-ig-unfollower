@@ -52,8 +52,7 @@ toggleBtn.addEventListener("click", async () => {
     await chrome.tabs.sendMessage(tab.id, { action: "STOP" }).catch(() => {});
     await chrome.action.setBadgeText({ text: "OFF" });
   } else {
-    await chrome.action.setBadgeText({ text: "ON" });
-    chrome.tabs.reload(tab.id);
+    await chrome.runtime.sendMessage({ action: "INITIATE_START" });
     window.close();
     return;
   }

@@ -49,15 +49,18 @@ chrome.runtime.onInstalled.addListener(() => {
 
 const MAX_ATTEMPTS = 3;
 let remainingAttempts = MAX_ATTEMPTS;
-let isRunning = false;
+
+// Only true when the extension itself triggered the reload (retry or user start).
+// A manual user refresh finds this false and stops the automation.
+let pendingRun = false;
 
 async function startAutomation(tab) {
-  isRunning = true;
+  pendingRun = true;
   chrome.tabs.reload(tab.id);
 }
 
 async function resetAutomation(tab) {
-  isRunning = false;
+  pendingRun = false;
   chrome.action.setBadgeText({ text: "OFF" });
   await safeSendMessage(tab.id, { action: "STOP" });
 }
@@ -75,9 +78,18 @@ chrome.runtime.onMessage.addListener(async function ({ action }) {
       isOnProfile = false;
       updateActionButtonStateByTab(tab.id);
       break;
+    case "INITIATE_START":
+      remainingAttempts = MAX_ATTEMPTS;
+      chrome.action.setBadgeText({ text: "ON" });
+      await startAutomation(tab);
+      break;
     case "START":
-      if ((await chrome.action.getBadgeText({ tabId: tab.id })) === "ON") {
+      if (pendingRun && (await chrome.action.getBadgeText({ tabId: tab.id })) === "ON") {
+        pendingRun = false;
         await safeSendMessage(tab.id, { action: "RUN" });
+      } else {
+        // User manually refreshed — stop automation
+        await resetAutomation(tab);
       }
       break;
     case "RESET":
@@ -94,17 +106,4 @@ chrome.runtime.onMessage.addListener(async function ({ action }) {
     default:
       break;
   }
-});
-
-chrome.action.onClicked.addListener(async (tab) => {
-  const isON = (await chrome.action.getBadgeText({ tabId: tab.id })) === "ON";
-
-  if (!isON) {
-    remainingAttempts = MAX_ATTEMPTS;
-    await startAutomation(tab);
-  } else {
-    await safeSendMessage(tab.id, { action: "STOP" });
-  }
-
-  chrome.action.setBadgeText({ text: isON ? "OFF" : "ON" });
 });
