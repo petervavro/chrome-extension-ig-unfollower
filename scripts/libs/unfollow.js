@@ -39,7 +39,7 @@ class UnfollowTask {
   // Finds the link element that navigates to the "following" dialog on Instagram.
   findFollowingDialogLink() {
     return Array.from(this.document.querySelectorAll('[role="link"]')).find(
-      (el) => el.textContent.includes(" following")
+      (el) => el.textContent.includes(" following"),
     );
   }
 
@@ -52,7 +52,7 @@ class UnfollowTask {
 
     // Get dialog with followers
     const listContainer = Array.from(
-      dialog.querySelectorAll("*")
+      dialog.querySelectorAll("*"),
     ).find((el) => {
       const style = el.getAttribute("style");
       return (
@@ -77,9 +77,10 @@ class UnfollowTask {
       currentAccounts = [...dialog.querySelectorAll('[type="button"]')]
         .filter(({ innerText }) => innerText === "Following")
         .map((btn) => ({
-          name: btn.parentElement.parentElement.previousSibling.querySelectorAll(
-            '[role="link"]'
-          )[0].text,
+          name:
+            btn.parentElement.parentElement.previousSibling.querySelectorAll(
+              '[role="link"]',
+            )[0].text,
           button: btn,
         }));
 
@@ -87,12 +88,13 @@ class UnfollowTask {
       const previousAccountNames = previousAccounts.map(({ name }) => name);
 
       currentAccounts = currentAccounts.filter(
-        ({ name }) => !previousAccountNames.includes(name)
+        ({ name }) => !previousAccountNames.includes(name),
       );
 
       // Prevent looping
-      if (!currentAccounts.length && ++attempts > MAX_ATTEMPTS)
+      if (!currentAccounts.length && ++attempts > MAX_ATTEMPTS) {
         throw new Error("NO_MORE_UNFOLLOW_BUTTONS");
+      }
 
       // Scroll to the bottom
       listContainer.scrollTo(0, listContainer.scrollHeight);
@@ -119,7 +121,7 @@ class UnfollowTask {
         view: window,
         bubbles: true,
         cancelable: false,
-      })
+      }),
     );
 
     await UnfollowTask.sleep(UnfollowTask.getRandomNumber(1135, 1910));
@@ -141,7 +143,7 @@ class UnfollowTask {
           view: window,
           bubbles: true,
           cancelable: false,
-        })
+        }),
       );
     }
   }

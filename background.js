@@ -84,7 +84,10 @@ chrome.runtime.onMessage.addListener(async function ({ action }) {
       await startAutomation(tab);
       break;
     case "START":
-      if (pendingRun && (await chrome.action.getBadgeText({ tabId: tab.id })) === "ON") {
+      if (
+        pendingRun &&
+        (await chrome.action.getBadgeText({ tabId: tab.id })) === "ON"
+      ) {
         pendingRun = false;
         await safeSendMessage(tab.id, { action: "RUN" });
       } else {

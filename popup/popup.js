@@ -29,7 +29,12 @@ async function syncState() {
   if (badge === "ON") {
     setState("running", "Automation is running…", true, true);
   } else {
-    setState("ready", "Ready. Click the button to start unfollowing.", true, false);
+    setState(
+      "ready",
+      "Ready. Click the button to start unfollowing.",
+      true,
+      false,
+    );
   }
 }
 

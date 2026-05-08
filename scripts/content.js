@@ -89,7 +89,11 @@ window.addEventListener("load", async () => {
 
   await checkIfOnCorrectPage();
 
-  if (await task.waitForElement(() => task.findFollowingDialogLink()).catch(() => null)) {
+  if (
+    await task.waitForElement(() => task.findFollowingDialogLink()).catch(() =>
+      null
+    )
+  ) {
     chrome.runtime.sendMessage({ action: "START" });
   }
 
